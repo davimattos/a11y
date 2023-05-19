@@ -4,7 +4,10 @@ import {mockAccountModel} from '../../domain/test/mock-account';
 
 export class AuthenticationSpy implements Authentication {
   account = mockAccountModel();
-  params: Authentication.Params;
+  params: Authentication.Params = {
+    email: '',
+    password: '',
+  };
   callsCount = 0;
 
   async auth(params: Authentication.Params): Promise<AccountModel> {

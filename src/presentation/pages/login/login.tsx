@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,27 +9,52 @@ import {
   Text,
 } from 'react-native';
 
-import Context from '../../context/form-context';
-import Input from '../../components/input/input';
 import {Authentication} from '../../../domain/protocols/authentication';
 import {SaveAccessToken} from '../../../domain/protocols/save-access-token';
+import {Validation} from '../../protocols/validation';
+
+import Context from '../../context/form-context';
+import Input from '../../components/input/input';
 
 type Props = {
+  validation: Validation;
   saveAccessToken: SaveAccessToken;
   authentication: Authentication;
 };
 
-const Login: React.FC<Props> = ({saveAccessToken, authentication}: Props) => {
+type FormFieldType = 'email' | 'password';
+
+const Login: React.FC<Props> = ({
+  saveAccessToken,
+  authentication,
+  validation,
+}: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     email: '',
+    emailError: '',
     password: '',
+    passwordError: '',
     mainError: '',
   });
 
+  const validate = (field: FormFieldType): void => {
+    setState((oldState: any) => ({
+      ...oldState,
+      [`${field}Error`]: validation.validate(field, {[field]: state[field]}),
+    }));
+  };
+
+  useEffect(() => validate('email'), [state.email]);
+  useEffect(() => validate('password'), [state.password]);
+
+  const isFormInvalid = useMemo(() => {
+    return !!state.emailError || !!state.passwordError;
+  }, [state.emailError, state.passwordError]);
+
   const handleSubmit = async () => {
     try {
-      if (state.isLoading) {
+      if (state.isLoading || isFormInvalid) {
         return;
       }
       setState({...state, isLoading: true});
