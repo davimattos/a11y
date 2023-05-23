@@ -3,7 +3,7 @@ import {StyleSheet, Text, TextInput, TextInputProps, View} from 'react-native';
 
 import Context from '../../context/form-context';
 
-type Props = {name: string} & TextInputProps;
+type Props = {name: string; title: string} & TextInputProps;
 
 const Input = (props: Props) => {
   const {state, setState} = useContext(Context);
@@ -18,14 +18,14 @@ const Input = (props: Props) => {
 
   return (
     <View style={styles.wrapper}>
-      <Text>{props.name}</Text>
+      <Text>{props.title}</Text>
       <TextInput
         style={styles.input}
         testID={props.name}
         {...props}
         onChangeText={handleChange}
       />
-      <Text testID='"main-error"' style={styles.error}>
+      <Text testID={`${props.name}-status`} style={styles.error}>
         {error}
       </Text>
     </View>
@@ -39,10 +39,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   input: {
-    minWidth: 150,
+    minWidth: 250,
     height: 45,
     borderColor: '#000',
     borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 10,
   },
   error: {
     color: 'red',
