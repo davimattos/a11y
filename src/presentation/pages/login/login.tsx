@@ -59,8 +59,6 @@ const Login: React.FC<Props> = ({
       });
       await saveAccessToken.save(account.accessToken);
     } catch (error: any) {
-      console.log(error);
-
       setState((old: any) => ({
         ...old,
         isLoading: false,
