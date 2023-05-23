@@ -1,20 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useMemo, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ActivityIndicator,
-  Button,
-  Text,
-} from 'react-native';
+import {StyleSheet, View, SafeAreaView, Text} from 'react-native';
 
 import {Authentication} from '../../../domain/protocols/authentication';
 import {SaveAccessToken} from '../../../domain/protocols/save-access-token';
 import {Validation} from '../../protocols/validation';
 
+import {Input, Button} from '../../components';
+import {FormStatus} from './components';
+
 import Context from '../../context/form-context';
-import Input from '../../components/input/input';
 
 type Props = {
   validation: Validation;
@@ -64,6 +59,8 @@ const Login: React.FC<Props> = ({
       });
       await saveAccessToken.save(account.accessToken);
     } catch (error: any) {
+      console.log(error);
+
       setState((old: any) => ({
         ...old,
         isLoading: false,
@@ -74,14 +71,20 @@ const Login: React.FC<Props> = ({
 
   return (
     <SafeAreaView style={styles.safe}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Login</Text>
+      </View>
       <Context.Provider value={{state, setState}}>
         <View style={styles.wrapper}>
-          <Input name="email" keyboardType="email-address" />
-          <Input name="password" secureTextEntry />
-          <Button title="Sign In" onPress={handleSubmit} />
-          <Text>{state.mainError}</Text>
+          <Input title="Your email" name="email" keyboardType="email-address" />
+          <Input title="Type password" name="password" secureTextEntry />
+          <Button
+            title="Sign In"
+            onPress={handleSubmit}
+            disabled={isFormInvalid}
+          />
         </View>
-        {state.isLoading && <ActivityIndicator />}
+        <FormStatus />
       </Context.Provider>
     </SafeAreaView>
   );
@@ -93,9 +96,17 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
   },
+  header: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 60,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
   wrapper: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
