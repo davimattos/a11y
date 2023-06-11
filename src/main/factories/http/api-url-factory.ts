@@ -1,3 +1,3 @@
 export const makeApiUrl = (path: string): string => {
-  return `services.com/${path}`;
+  return `http://localhost:3000${path}`;
 };

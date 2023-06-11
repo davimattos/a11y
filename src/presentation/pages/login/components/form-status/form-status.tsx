@@ -8,7 +8,9 @@ const FormStatus: React.FC = () => {
 
   return (
     <View testID="error-wrapper">
-      {state.isLoading && <ActivityIndicator role="spinbutton" />}
+      {state.isLoading && (
+        <ActivityIndicator role="spinbutton" testID="spinbutton" />
+      )}
       {state.mainError && <Text testID="main-error">{state.mainError}</Text>}
     </View>
   );

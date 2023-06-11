@@ -2,7 +2,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View, SafeAreaView, Text} from 'react-native';
 
-import {Authentication} from '../../../domain/protocols/authentication';
 import {SaveAccessToken} from '../../../domain/protocols/save-access-token';
 import {Validation} from '../../protocols/validation';
 
@@ -10,20 +9,16 @@ import {Input, Button} from '../../components';
 import {FormStatus} from './components';
 
 import Context from '../../context/form-context';
+import axiosHttp from '../../../infrastructure/http/http-client';
 
 type Props = {
   validation: Validation;
   saveAccessToken: SaveAccessToken;
-  authentication: Authentication;
 };
 
 type FormFieldType = 'email' | 'password';
 
-const Login: React.FC<Props> = ({
-  saveAccessToken,
-  authentication,
-  validation,
-}: Props) => {
+const Login: React.FC<Props> = ({saveAccessToken, validation}: Props) => {
   const [state, setState] = useState({
     isLoading: false,
     email: '',
@@ -53,11 +48,13 @@ const Login: React.FC<Props> = ({
         return;
       }
       setState({...state, isLoading: true});
-      const account = await authentication.auth({
-        email: state.email,
-        password: state.password,
+      await axiosHttp({
+        url: '/login',
+        method: 'post',
+      }).then(async (res: any) => {
+        await saveAccessToken.save(res.data.accessToken);
       });
-      await saveAccessToken.save(account.accessToken);
+      //TODO: go to next page
     } catch (error: any) {
       setState((old: any) => ({
         ...old,
@@ -77,6 +74,7 @@ const Login: React.FC<Props> = ({
           <Input title="Your email" name="email" keyboardType="email-address" />
           <Input title="Type password" name="password" secureTextEntry />
           <Button
+            testID="button"
             title="Sign In"
             onPress={handleSubmit}
             disabled={isFormInvalid}

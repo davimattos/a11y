@@ -1,6 +1,7 @@
-import {by, device, expect, element} from 'detox';
+import faker from 'faker';
+import {by, element, expect, device} from 'detox';
 
-describe('Example', () => {
+describe('Login', () => {
   beforeAll(async () => {
     await device.launchApp();
   });
@@ -9,17 +10,38 @@ describe('Example', () => {
     await device.reloadReactNative();
   });
 
-  it('should have welcome screen', async () => {
-    await expect(element(by.id('welcome'))).toBeVisible();
-  });
+  // it('Should load with correctly inital state', async () => {
+  //   await expect(element(by.id('email'))).toHaveText('');
+  //   await expect(element(by.id('password'))).toHaveText('');
 
-  it('should show hello screen after tap', async () => {
-    await element(by.id('hello_button')).tap();
-    await expect(element(by.text('Hello!!!'))).toBeVisible();
-  });
+  //   await expect(element(by.id('email-status'))).toHaveText('Required field');
+  //   await expect(element(by.id('password-status'))).toHaveText(
+  //     'Required field',
+  //   );
 
-  it('should show world screen after tap', async () => {
-    await element(by.id('world_button')).tap();
-    await expect(element(by.text('World!!!'))).toBeVisible();
+  //   await expect(element(by.id('error-wrapper'))).not.toBeVisible();
+  // });
+
+  // it('Should present error state if form is invalid', async () => {
+  //   await element(by.id('email')).typeText(faker.random.word());
+  //   await element(by.id('password')).typeText(faker.random.alphaNumeric(3));
+
+  //   await expect(
+  //     element(by.id('email-status').and(by.text('Invalid data'))),
+  //   ).toBeVisible();
+  //   await expect(element(by.id('password-status'))).toHaveText('Invalid data');
+
+  //   await expect(element(by.id('error-wrapper'))).not.toBeVisible();
+  // });
+
+  it('Should present error if invalid credentials are provided', async () => {
+    await element(by.id('email')).typeText(faker.internet.email());
+    await element(by.id('password')).typeText(faker.random.alphaNumeric(6));
+
+    await element(by.id('button')).tap();
+
+    // await expect(
+    //   element(by.id('error-wrapper').and(by.id('spinbutton'))),
+    // ).toExist();
   });
 });
